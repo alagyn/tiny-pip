@@ -1,0 +1,1 @@
+SELECT pkg_name FROM packages

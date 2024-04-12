@@ -1,7 +1,7 @@
 import sqlite3
 import os
 from tinypip.config import config
-from typing import Optional
+from typing import Optional, List
 import hashlib
 
 from tinypip.package import Package, InstType, Instance, getType, isVersionCanonical, normalizeToWheel
@@ -17,6 +17,7 @@ def _loadStatement(*path: str) -> str:
 ADD_PKG_STMT = _loadStatement("queries", "add_package.sql")
 ADD_INST_STMT = _loadStatement("queries", "add_instance.sql")
 GET_INSTS_STMT = _loadStatement("queries", "get_instances.sql")
+GET_PROJECTS_STMT = _loadStatement("queries", "get_projects.sql")
 
 
 def autocommit(func):
@@ -181,6 +182,10 @@ class TinyDB:
             return None
 
         return pkg
+
+    def getProjects(self) -> List[str]:
+        res = self.con.execute(GET_PROJECTS_STMT)
+        return list(res.fetchall())
 
 
 database = TinyDB()

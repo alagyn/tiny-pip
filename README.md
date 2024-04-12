@@ -19,5 +19,3 @@ tinypip:
   # remove this key to disable fallthrough
   fallthrough: "https://www.pypi.org/simple"
 ```
-
-## 

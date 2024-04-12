@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from fastapi.responses import JSONResponse, StreamingResponse, RedirectResponse
+from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
 from pydantic import BaseModel
 import os
 
@@ -7,6 +7,20 @@ from tinypip.tinydb import database
 from tinypip.config import config
 
 router = APIRouter(prefix="/index", tags=["packages"])
+
+
+@router.get("/")
+def get_projects():
+    projects = database.getProjects()
+    data = {
+        "meta": {
+            "api-version": "1.0"
+        },
+        "projects": [{
+            "name": x
+        } for x in projects]
+    }
+    return JSONResponse(content=data)
 
 
 @router.get("/{pkg_name}/")
@@ -34,8 +48,6 @@ def get_package(pkg_name: str):
         "files": [x.toDict() for x in pkg.instances]
     }
 
-    print(data)
-
     return JSONResponse(
         content=data, media_type="application/vnd.pypi.simple.v1+json"
     )
@@ -45,8 +57,4 @@ def get_package(pkg_name: str):
 def download_file(pkg_name: str, filepath: str):
     fullpath = os.path.join(config.pkg_base, pkg_name, filepath)
 
-    def iterfile():
-        with open(fullpath, mode='rb') as f:
-            yield from f
-
-    return StreamingResponse(iterfile())
+    return FileResponse(fullpath)
