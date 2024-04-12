@@ -34,7 +34,9 @@ class TinyDB:
         needsInit = not os.path.isfile(config.index_db)
         print(f"TinyDB.init() Connecting to {config.index_db}")
         if sqlite3.threadsafety != 3:
-            raise RuntimeError("sqlite3 not thread safety is not serialized")
+            raise RuntimeError(
+                "sqlite3 version does not support serialized multithreading"
+            )
         self.con = sqlite3.connect(config.index_db, check_same_thread=False)
 
         if needsInit:
