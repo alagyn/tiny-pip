@@ -1,8 +1,10 @@
 # tiny-pip
 A minimal service for hosting a local PyPi index.
+tiny-pip conforms to the [Simple Repository API](https://packaging.python.org/en/latest/specifications/simple-repository-api/#json-serialization)
 
 ## Features
-TODO lol
+- Minimal configuration
+- Fallthrough to external python indicies
 
 ## Config
 Tinypip requires but a single yaml file for configuration
@@ -17,3 +19,5 @@ tinypip:
   # remove this key to disable fallthrough
   fallthrough: "https://www.pypi.org/simple"
 ```
+
+## 
