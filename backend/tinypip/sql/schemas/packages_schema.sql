@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS packages
+(
+    pkg_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pkg_name TEXT UNIQUE
+)
