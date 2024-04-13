@@ -4,7 +4,7 @@ from tinypip.config import config
 from typing import Optional, List
 import hashlib
 
-from tinypip.package import Package, InstType, Instance, getType, isVersionCanonical, normalizeToWheel
+from tinypip.package import Package, InstType, Instance, instanceFromFilename, getType
 
 SQL_DIR = os.path.join(os.path.dirname(__file__), "sql")
 
@@ -15,16 +15,19 @@ def _loadStatement(*path: str) -> str:
 
 
 ADD_PKG_STMT = _loadStatement("queries", "add_package.sql")
+GET_PKG_ID_STMT = _loadStatement("queries", "get_package_id.sql")
 ADD_INST_STMT = _loadStatement("queries", "add_instance.sql")
 GET_INSTS_STMT = _loadStatement("queries", "get_instances.sql")
 GET_PROJECTS_STMT = _loadStatement("queries", "get_projects.sql")
+SEARCH_INST_STMT = _loadStatement("queries", "search_instance.sql")
 
 
 def autocommit(func):
 
     def wrapper(self: 'TinyDB', *args, **kwargs):
-        func(self, *args, **kwargs)
+        out = func(self, *args, **kwargs)
         self.con.commit()
+        return out
 
     return wrapper
 
@@ -66,106 +69,65 @@ class TinyDB:
             # TODO attempt to load metadata?
             for instName in os.listdir(pkgPath):
                 instPath = os.path.join(name, instName)
-                self._addInstance(name, pkgID, instPath)
+                try:
+                    instance = instanceFromFilename(instName)
+                except Exception as err:
+                    print(f"Bad instance of package '{name}': {err}")
+                    continue
 
-    def _insertPackage(self, packageName: str) -> int:
+                if instance.filepath != instPath:
+                    print(
+                        f"Bad instance of package '{name}': '{instPath}', package name doesn't match"
+                    )
+                    continue
+                self._addInstance(instance, pkgID)
+
+    @autocommit
+    def addInstance(self, inst: Instance):
+        pkgID = self.addPackage(inst.package)
+        self._addInstance(inst, pkgID)
+
+    @autocommit
+    def addPackage(self, packageName: str) -> int:
         """
         Attempt to add a new package. Does nothing if
         package with passed name already exists.
         Returns (new) package ID
         """
+        return self._insertPackage(packageName)
 
+    def _insertPackage(self, packageName: str) -> int:
         res = self.con.execute(ADD_PKG_STMT, {
             "pkg_name": packageName
         })
-        out = int(res.fetchone()[0])
+        data = res.fetchone()
+
+        out = int(data[0])
 
         return out
 
-    def _addInstance(self, pkgName: str, pkgID: int, filepath: str):
-        namestr = os.path.split(filepath)[1]
-        namestr = os.path.splitext(namestr)[0]
-        instType = getType(filepath)
-        if instType == InstType.SRC:
-            # source distro
-            self._addSourceDistro(
-                pkgName=pkgName,
-                pkgID=pkgID,
-                filepath=filepath,
-                namestr=namestr
-            )
-        elif instType == InstType.WHL:
-            # wheel
-            self._addWheel(
-                pkgName=pkgName,
-                pkgID=pkgID,
-                filepath=filepath,
-                namestr=namestr
-            )
-        else:
-            # TODO error
-            pass
+    def _addInstance(self, inst: Instance, pkgID: int):
+        if inst.sha256 is None:
+            h = hashlib.sha256()
+            BUFSIZE = 65536
+            with open(os.path.join(config.pkg_base, inst.filepath),
+                      mode='rb') as f:
+                while True:
+                    data = f.read(BUFSIZE)
+                    if not data:
+                        break
+                    h.update(data)
+            inst.sha256 = h.hexdigest()
 
-    def _addSourceDistro(
-        self, pkgName: str, pkgID: int, filepath: str, namestr: str
-    ):
-        # get rid of .tar
-        namestr = os.path.splitext(namestr)[0]
-        if not namestr.startswith(pkgName):
-            print(f"Bad instance of package '{pkgName}': '{filepath}'")
-            # TODO error
-            return
-
-        # +1 for the dash after the name
-        versionStr = namestr[len(pkgName) + 1:]
-        if not isVersionCanonical(versionStr):
-            print(f"Bad instance version of package '{pkgName}': '{filepath}'")
-            # TODO error
-            return
-
-        self._insertInstance(
-            pkgID=pkgID, pkgVersion=versionStr, pkgPath=filepath
-        )
-
-    def _addWheel(self, pkgName: str, pkgID: int, filepath: str, namestr: str):
-        wheelNormName = normalizeToWheel(pkgName)
-
-        name, version, pyTag, abiTag, platform = namestr.split("-")
-
-        if name != wheelNormName:
-            print(f"Bad instance of package '{pkgName}': '{filepath}'")
-            # TODO error
-            return
-
-        if not isVersionCanonical(version):
-            print(f"Bad instance version of package '{pkgName}': '{filepath}'")
-            # TODO error
-            return
-
-        self._insertInstance(pkgID=pkgID, pkgVersion=version, pkgPath=filepath)
-
-    def _insertInstance(self, pkgID: int, pkgVersion: str, pkgPath: str):
-        h = hashlib.sha256()
-        BUFSIZE = 65536
-        with open(os.path.join(config.pkg_base, pkgPath), mode='rb') as f:
-            while True:
-                data = f.read(BUFSIZE)
-                if not data:
-                    break
-                h.update(data)
         self.con.execute(
             ADD_INST_STMT,
             {
                 "pkg_id": pkgID,
-                "pkg_version": pkgVersion,
-                "pkg_path": pkgPath,
-                "sha256": h.hexdigest()
+                "pkg_version": inst.version,
+                "pkg_path": inst.filepath,
+                "sha256": inst.sha256
             }
         )
-
-    @autocommit
-    def addPackage(self, packageName: str) -> int:
-        return self._insertPackage(packageName)
 
     def getPackage(self, packageName: str) -> Optional[Package]:
         res = self.con.execute(GET_INSTS_STMT, {
@@ -175,7 +137,10 @@ class TinyDB:
         pkg = Package(packageName)
 
         for x in res.fetchall():
-            inst = Instance(*x)
+            path = x[0]
+            version = x[1]
+            sha256 = x[2]
+            inst = Instance(packageName, path, version, getType(path), sha256)
             pkg.addInstance(inst)
 
         if len(pkg.instances) == 0:

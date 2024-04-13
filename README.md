@@ -18,4 +18,6 @@ tinypip:
   # OPTIONAL fallthrough URL if a package is not found locally
   # remove this key to disable fallthrough
   fallthrough: "https://www.pypi.org/simple"
+  # enable to allow overwriting existing package versions
+  overwrite: true
 ```

@@ -21,5 +21,10 @@ class TinyConfig:
             self.ft_url = ""
             self.fallthrough = False
 
+        try:
+            self.overwrite = bool(config['overwrite'])
+        except KeyError:
+            self.overwrite = False
+
 
 config = TinyConfig()
