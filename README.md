@@ -21,3 +21,12 @@ tinypip:
   # enable to allow overwriting existing package versions
   overwrite: true
 ```
+
+## Usage:
+You can manually specify tinypip via pip/twine CLI
+```sh
+pip install --index http://localhost:8000/api/index [packages...]
+twine upload --repository-url http://localhost:8000/api/index [files...]
+```
+
+TODO: pip/pypirc config file examples
