@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS instances
+CREATE TABLE IF NOT EXISTS releases
 (
     pkg_id INTEGER NOT NULL,
     pkg_version TEXT,

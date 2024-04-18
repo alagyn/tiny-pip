@@ -4,7 +4,7 @@ from tinypip.config import config
 from typing import Optional, List
 import hashlib
 
-from tinypip.package import Package, InstType, Instance, instanceFromFilename, getType
+from tinypip.package import Package, RelType, Release, releaseFromFilename, getType
 
 SQL_DIR = os.path.join(os.path.dirname(__file__), "sql")
 
@@ -16,10 +16,10 @@ def _loadStatement(*path: str) -> str:
 
 ADD_PKG_STMT = _loadStatement("queries", "add_package.sql")
 GET_PKG_ID_STMT = _loadStatement("queries", "get_package_id.sql")
-ADD_INST_STMT = _loadStatement("queries", "add_instance.sql")
-GET_INSTS_STMT = _loadStatement("queries", "get_instances.sql")
+ADD_INST_STMT = _loadStatement("queries", "add_release.sql")
+GET_INSTS_STMT = _loadStatement("queries", "get_releases.sql")
 GET_PROJECTS_STMT = _loadStatement("queries", "get_projects.sql")
-SEARCH_INST_STMT = _loadStatement("queries", "search_instance.sql")
+SEARCH_INST_STMT = _loadStatement("queries", "search_release.sql")
 
 
 def autocommit(func):
@@ -47,7 +47,7 @@ class TinyDB:
             print(f"TinyDB.init() Initializing Schemas")
             cur = self.con.cursor()
             cur.execute(_loadStatement("schemas", "packages_schema.sql"))
-            cur.execute(_loadStatement("schemas", "instance_schema.sql"))
+            cur.execute(_loadStatement("schemas", "release_schema.sql"))
             self.con.commit()
 
             self.reindex()
@@ -70,22 +70,22 @@ class TinyDB:
             for instName in os.listdir(pkgPath):
                 instPath = os.path.join(name, instName)
                 try:
-                    instance = instanceFromFilename(instName)
+                    release = releaseFromFilename(instName)
                 except Exception as err:
-                    print(f"Bad instance of package '{name}': {err}")
+                    print(f"Bad release of package '{name}': {err}")
                     continue
 
-                if instance.filepath != instPath:
+                if release.filepath != instPath:
                     print(
-                        f"Bad instance of package '{name}': '{instPath}', package name doesn't match"
+                        f"Bad release of package '{name}': '{instPath}', package name doesn't match"
                     )
                     continue
-                self._addInstance(instance, pkgID)
+                self._addRelease(release, pkgID)
 
     @autocommit
-    def addInstance(self, inst: Instance):
+    def addRelease(self, inst: Release):
         pkgID = self.addPackage(inst.package)
-        self._addInstance(inst, pkgID)
+        self._addRelease(inst, pkgID)
 
     @autocommit
     def addPackage(self, packageName: str) -> int:
@@ -106,7 +106,7 @@ class TinyDB:
 
         return out
 
-    def _addInstance(self, inst: Instance, pkgID: int):
+    def _addRelease(self, inst: Release, pkgID: int):
         if inst.sha256 is None:
             h = hashlib.sha256()
             BUFSIZE = 65536
@@ -140,10 +140,10 @@ class TinyDB:
             path = x[0]
             version = x[1]
             sha256 = x[2]
-            inst = Instance(packageName, path, version, getType(path), sha256)
-            pkg.addInstance(inst)
+            inst = Release(packageName, path, version, getType(path), sha256)
+            pkg.addRelease(inst)
 
-        if len(pkg.instances) == 0:
+        if len(pkg.releases) == 0:
             return None
 
         return pkg

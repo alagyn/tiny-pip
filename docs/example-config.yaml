@@ -1,0 +1,11 @@
+tinypip:
+  # root directory for stored packages
+  # {config-base} will be replaced with the directory this file is contained in
+  pkg_base: "{config-base}/packages"
+  # path to sqlite package database
+  index_db: "{config-base}/index.db"
+  # OPTIONAL fallthrough URL if a package is not found locally
+  # remove this key to disable fallthrough
+  fallthrough: "https://www.pypi.org/simple"
+  # enable to allow overwriting existing package versions
+  overwrite: true

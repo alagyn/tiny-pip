@@ -6,7 +6,7 @@ from typing import Annotated
 
 from tinypip.tinydb import database
 from tinypip.config import config
-from tinypip.package import Instance, instanceFromFilename
+from tinypip.package import Release, releaseFromFilename
 
 router = APIRouter(prefix="/index", tags=["packages"])
 
@@ -45,8 +45,8 @@ async def get_package(pkg_name: str):
         },
         "name": pkg_name,
         "versions": list({x.version
-                          for x in pkg.instances}),
-        "files": [x.toDict() for x in pkg.instances]
+                          for x in pkg.releases}),
+        "files": [x.toDict() for x in pkg.releases]
     }
 
     return JSONResponse(
@@ -70,9 +70,9 @@ async def upload_file(
         raise RuntimeError()
     filepath = os.path.join(name, content.filename)
 
-    instance = Instance(name, filepath, version)
+    release = Release(name, filepath, version)
 
-    fullpath = os.path.join(config.pkg_base, instance.filepath)
+    fullpath = os.path.join(config.pkg_base, release.filepath)
 
     if os.path.exists(fullpath) and not config.overwrite:
         return JSONResponse(
@@ -89,4 +89,4 @@ async def upload_file(
                 break
             f.write(data)
 
-    database.addInstance(instance)
+    database.addRelease(release)
