@@ -12,15 +12,15 @@ router = APIRouter(prefix="/index", tags=["packages"])
 
 
 @router.get("/", response_class=JSONResponse)
-async def get_projects():
-    projects = database.getProjects()
+async def get_packages():
+    packages = database.getPackages()
     data = {
         "meta": {
             "api-version": "1.0"
         },
         "projects": [{
             "name": x
-        } for x in projects]
+        } for x in packages]
     }
     return JSONResponse(content=data)
 

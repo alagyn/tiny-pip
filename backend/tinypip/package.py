@@ -29,12 +29,14 @@ def isVersionCanonical(version):
 
 class Release:
 
-    def __init__(self,
-                 package: str,
-                 filepath: str,
-                 version: str,
-                 instType: Optional[RelType] = None,
-                 sha256: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        package: str,
+        filepath: str,
+        version: str,
+        instType: Optional[RelType] = None,
+        sha256: Optional[str] = None
+    ) -> None:
         self.package = package
         self.filepath = filepath
         self.version = version
@@ -43,10 +45,15 @@ class Release:
 
     def toDict(self) -> Dict[str, Any]:
         fname = os.path.split(self.filepath)[1]
-        out: Dict[str, Any] = {"filename": fname, "url": fname}
+        out: Dict[str, Any] = {
+            "filename": fname,
+            "url": fname
+        }
 
         if self.sha256 is not None:
-            out["hashes"] = {"sha256": self.sha256}
+            out["hashes"] = {
+                "sha256": self.sha256
+            }
 
         return out
 
@@ -88,12 +95,14 @@ def _makeSourceDistro(filename: str) -> Release:
         raise RuntimeError("Cannot find Source Distro Version")
 
     version = m.group()
-    package = namestr[:-len(version) - 1]
+    package = normalizeName(namestr[:-len(version) - 1])
 
-    return Release(package=package,
-                   version=version,
-                   filepath=os.path.join(package, filename),
-                   instType=RelType.SRC)
+    return Release(
+        package=package,
+        version=version,
+        filepath=os.path.join(package, filename),
+        instType=RelType.SRC
+    )
 
 
 def _makeWheel(filename: str) -> Release:
@@ -104,10 +113,12 @@ def _makeWheel(filename: str) -> Release:
 
     package = normalizeName(name)
 
-    return Release(package=package,
-                   version=version,
-                   filepath=os.path.join(package, filename),
-                   instType=RelType.WHL)
+    return Release(
+        package=package,
+        version=version,
+        filepath=os.path.join(package, filename),
+        instType=RelType.WHL
+    )
 
 
 class Package:

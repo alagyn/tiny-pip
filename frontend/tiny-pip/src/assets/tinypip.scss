@@ -1,5 +1,6 @@
 $primary-color: #ffbb00;
-$bg-color: #5b5b5b;
+$secondary-color: #ffedb8;
+$bg-color: #444;
 
 body {
     color: #f0f;
@@ -8,4 +9,6 @@ body {
 
 .container {
     color: #fff;
+    background: #666;
+    border-radius: 4px;
 }

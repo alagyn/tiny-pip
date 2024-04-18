@@ -3,8 +3,17 @@ from tinypip import tinydb
 
 #--- initialize main FastAPI instance
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 from tinypip.api import main_router
 
@@ -21,6 +30,9 @@ async def root():
 if __name__ == '__main__':
     from uvicorn.config import Config
     from uvicorn.server import Server
+    import logging
+
+    logging.getLogger().setLevel(logging.DEBUG)
 
     config = Config(
         'tinypip.__main__:app',

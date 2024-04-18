@@ -16,10 +16,13 @@ def _loadStatement(*path: str) -> str:
 
 ADD_PKG_STMT = _loadStatement("queries", "add_package.sql")
 GET_PKG_ID_STMT = _loadStatement("queries", "get_package_id.sql")
-ADD_INST_STMT = _loadStatement("queries", "add_release.sql")
-GET_INSTS_STMT = _loadStatement("queries", "get_releases.sql")
-GET_PROJECTS_STMT = _loadStatement("queries", "get_projects.sql")
-SEARCH_INST_STMT = _loadStatement("queries", "search_release.sql")
+GET_PKGS_STMT = _loadStatement("queries", "get_packages.sql")
+COUNT_PKGS_STMT = _loadStatement("queries", "count_packages.sql")
+
+ADD_REL_STMT = _loadStatement("queries", "add_release.sql")
+GET_RELS_STMT = _loadStatement("queries", "get_releases.sql")
+SEARCH_REL_STMT = _loadStatement("queries", "search_releases.sql")
+COUNT_RELS_STMT = _loadStatement("queries", "count_releases.sql")
 
 
 def autocommit(func):
@@ -47,7 +50,7 @@ class TinyDB:
             print(f"TinyDB.init() Initializing Schemas")
             cur = self.con.cursor()
             cur.execute(_loadStatement("schemas", "packages_schema.sql"))
-            cur.execute(_loadStatement("schemas", "release_schema.sql"))
+            cur.execute(_loadStatement("schemas", "releases_schema.sql"))
             self.con.commit()
 
             self.reindex()
@@ -120,7 +123,7 @@ class TinyDB:
             inst.sha256 = h.hexdigest()
 
         self.con.execute(
-            ADD_INST_STMT,
+            ADD_REL_STMT,
             {
                 "pkg_id": pkgID,
                 "pkg_version": inst.version,
@@ -130,7 +133,7 @@ class TinyDB:
         )
 
     def getPackage(self, packageName: str) -> Optional[Package]:
-        res = self.con.execute(GET_INSTS_STMT, {
+        res = self.con.execute(GET_RELS_STMT, {
             "pkg_name": packageName
         })
 
@@ -148,9 +151,17 @@ class TinyDB:
 
         return pkg
 
-    def getProjects(self) -> List[str]:
-        res = self.con.execute(GET_PROJECTS_STMT)
+    def getPackages(self) -> List[str]:
+        res = self.con.execute(GET_PKGS_STMT)
         return list(res.fetchall())
+
+    def countPackages(self) -> int:
+        res = self.con.execute(COUNT_PKGS_STMT)
+        return int(res.fetchone()[0])
+
+    def countReleases(self) -> int:
+        res = self.con.execute(COUNT_RELS_STMT)
+        return int(res.fetchone()[0])
 
 
 database = TinyDB()
