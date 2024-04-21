@@ -33,6 +33,13 @@ onMounted(() => {
             Index URL: {{ indexURL }}
         </div>
 
+        <div class="container-sm search-div">
+            <form>
+                <input type="search" class="form-control" placeholder="Search Packages"
+                    style="width: min-content; display: inline-block;" />
+            </form>
+        </div>
+
         <div class="stats-div">
             <p class="stats-div-stat">{{ numPackages }} Packages</p>
             <p class="stats-div-stat">{{ numReleases }} Releases</p>
@@ -58,5 +65,9 @@ onMounted(() => {
     padding: 20px 20px;
     font-size: 1.2rem;
     margin: 0;
+}
+
+.search-div {
+    margin: 30px;
 }
 </style>
