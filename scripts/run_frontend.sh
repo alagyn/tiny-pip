@@ -2,6 +2,6 @@
 set -e
 
 home=$(realpath $(dirname $0)/..)
-cd $home/frontend/tiny-pip
+cd $home/frontend/
 npm run dev
 

@@ -8,7 +8,7 @@ router = APIRouter(prefix="/metadata", tags=["UI"])
 @router.get("/")
 async def get_metadata():
     return {
-        "indexURL": "http://localhost:8000/",  # TODO config
+        "indexURL": "http://localhost:8000/api/index",  # TODO config
         "numPackages": database.countPackages(),
         "numReleases": database.countReleases()
     }
