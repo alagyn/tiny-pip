@@ -1,5 +1,5 @@
 <script setup lang="ts">
-
+const props = defineProps(['hasSearch'])
 </script>
 
 <template>
@@ -13,6 +13,8 @@
                 <a class="navbar-brand" href="#">
                     <img src="/tiny-pip-logo.png" alt="Logo" />
                     tiny-pip </a>
+                <p v-if="hasSearch"> search.....</p>
+                <p>Val: {{ hasSearch }}</p>
             </div>
         </nav>
     </main>

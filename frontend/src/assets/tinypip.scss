@@ -1,15 +1,14 @@
 $primary-color: #ffbb00;
-$secondary-color: #d49c00;
+$secondary-color: #eaac00;
 $bg-color: #383838;
 $dark: #262526;
-$orange: #f96b0c;
+$offwhite: #ececec;
 $blue: #0177b2;
 
 body {
     color: #f0f;
-    background-color: $bg-color;
-    //font-family: Source Sans\ 3, Helvetica, arial, sans-serif;
-    font-family: monospace;
+    background-color: whitesmoke;
+    font-family: "Source Code Pro", monospace;
 }
 
 .container {
