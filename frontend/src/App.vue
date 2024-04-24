@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue'
 
 import TPNav from "./components/TPNav.vue"
-import RepoStatus from "./components/RepoStatus.vue"
 import Homepage from "./pages/Homepage.vue"
 import Search from "./pages/Search.vue"
 import NotFound from "./pages/NotFound.vue"
@@ -28,7 +27,7 @@ const currentView = computed(
 )
 
 const navBarSearch = computed(
-  () => 
+  () =>
   {
     console.log(currentPath.value)
     let x = currentPath.value != ''
@@ -43,7 +42,6 @@ const navBarSearch = computed(
 <template>
   <header>
   </header>
-
   <main>
     <TPNav :hasSearch="navBarSearch" />
     <component :is="currentView" />

@@ -3,28 +3,25 @@ const props = defineProps(['hasSearch'])
 </script>
 
 <template>
-    <header>
 
-    </header>
+  <nav class="navbar">
+    <ul>
+      <li><a href="#">
+          <img src="/tiny-pip-logo.png" alt="Tiny-Pip Logo" />
+        </a>
+      </li>
+      <li><strong>tiny-pip</strong></li>
+      <li><a href="#/browse">Browse</a></li>
+      <li v-if="hasSearch">Search...</li>
+    </ul>
+  </nav>
 
-    <main>
-        <nav class="navbar navbar-expand-lg px-5">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">
-                    <img src="/tiny-pip-logo.png" alt="Logo" />
-                    tiny-pip </a>
-                <p v-if="hasSearch"> search.....</p>
-                <p>Val: {{ hasSearch }}</p>
-            </div>
-        </nav>
-    </main>
 </template>
 
 <style lang="scss">
 @import "../assets/tinypip.scss";
 
 .navbar {
-    background-color: $primary-color;
-
+  padding: 0px 100px;
 }
 </style>

@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import axios from 'axios'
 
-import "bootstrap/dist/css/bootstrap.css"
+import "@picocss/pico"
 import "bootstrap-icons/font/bootstrap-icons.css"
 import "./assets/tinypip.scss"
 

@@ -1,16 +1,16 @@
-$primary-color: #ffbb00;
-$secondary-color: #eaac00;
-$bg-color: #383838;
-$dark: #262526;
-$offwhite: #ececec;
+@use "@picocss/pico/scss/pico" with ($theme-color: "yellow"
+);
+
+//$primary-color: #ffbb00;
+//$secondary-color: #eaac00;
+//$bg-color: #383838;
+//$dark: #262526;
 $blue: #0177b2;
 
-body {
-    color: #f0f;
-    background-color: whitesmoke;
-    font-family: "Source Code Pro", monospace;
+:root {
+    --pico-border-radius: 1px;
 }
 
-.container {
-    border-radius: 4px;
+body {
+    font-family: "Source Code Pro", monospace;
 }
