@@ -38,7 +38,7 @@ onMounted(() =>
       with tiny-pip
     </b>
 
-    <div class="search-div container">
+    <div class="search-div">
       <SearchInput />
     </div>
   </div>
@@ -78,16 +78,12 @@ onMounted(() =>
   text-align: center;
   font-size: xx-large;
   color: $blue;
-  //background-color: $secondary-color;
-  //padding: 20px 20px;
-  //border-top: 1px solid #d29a00;
 }
 
 .search-div {
   text-align: center;
   font-size: medium;
-  margin: 30px;
-  margin-top: 50px;
+  margin: 40px 13rem 50px;
   padding-bottom: 50px;
 }
 
@@ -104,7 +100,6 @@ onMounted(() =>
 }
 
 .info-div {
-  //margin: 0px 50px;
-  //width: 50%;
+  margin: 0px 10rem;
 }
 </style>
