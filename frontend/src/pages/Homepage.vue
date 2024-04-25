@@ -32,28 +32,27 @@ onMounted(() =>
 </script>
 
 <template>
-  <main>
-    <div class="main-text">
-      <b>
-        Find, install, and publish Python packages<br>
-        with tiny-pip
-      </b>
+  <div class="main-text">
+    <b>
+      Find, install, and publish Python packages<br>
+      with tiny-pip
+    </b>
 
-      <div class="search-div container">
-        <SearchInput />
-      </div>
+    <div class="search-div container">
+      <SearchInput />
     </div>
+  </div>
 
-    <hr>
+  <hr>
+  <div class="stats-div">
+    <xxx class="stats-div-stat">{{ numPackages }} Packages</xxx>
+    <xxx class="stats-div-stat">{{ numReleases }} Releases</xxx>
+  </div>
 
-    <div class="stats-div">
-      <p class="stats-div-stat">{{ numPackages }} Packages</p>
-      <p class="stats-div-stat">{{ numReleases }} Releases</p>
-    </div>
+  <hr>
 
-    <hr>
-
-    <div class="container info-div">
+  <div>
+    <div class="info-div">
       Access your packages via
       <pre><code>{{ indexURL }}</code></pre>
 
@@ -67,8 +66,8 @@ onMounted(() =>
   repository = {{ indexURL }}
 </code></pre>
     </div>
+  </div>
 
-  </main>
 </template>
 
 <style lang="scss">
@@ -104,8 +103,8 @@ onMounted(() =>
   margin: 0;
 }
 
-pre {
-  width: 50%;
-  display: inline;
+.info-div {
+  //margin: 0px 50px;
+  //width: 50%;
 }
 </style>

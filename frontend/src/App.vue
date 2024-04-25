@@ -41,9 +41,9 @@ const navBarSearch = computed(
 
 <template>
   <header>
+    <TPNav :hasSearch="navBarSearch" />
   </header>
   <main>
-    <TPNav :hasSearch="navBarSearch" />
     <component :is="currentView" />
   </main>
 </template>
