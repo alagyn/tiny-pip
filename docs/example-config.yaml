@@ -9,3 +9,6 @@ tinypip:
   fallthrough: "https://www.pypi.org/simple"
   # enable to allow overwriting existing package versions
   overwrite: true
+
+  # listening port
+  port: 8000
