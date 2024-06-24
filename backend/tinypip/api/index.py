@@ -82,6 +82,10 @@ async def upload_file(
         )
 
     BUFSIZE = 65535
+
+    parentDir = os.path.dirname(fullpath)
+    os.makedirs(parentDir, exist_ok=True)
+
     with open(fullpath, mode='wb') as f:
         while True:
             data = await content.read(BUFSIZE)
