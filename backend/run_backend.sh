@@ -2,8 +2,10 @@
 set -e
 
 home=$(realpath $(dirname $0))
-cd $home/..
+cd $home
+root=$(realpath $home/..)
 
-export TINYPIP_CONFIG=$home/test-data/config.yaml
 
-$home/venv/bin/python -m tinypip
+export TINYPIP_CONFIG=$root/test-data/config.yaml
+
+$root/venv/bin/python -m tinypip

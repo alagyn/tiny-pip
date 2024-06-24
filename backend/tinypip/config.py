@@ -13,10 +13,10 @@ class TinyConfig:
 
         configBase = os.path.abspath(os.path.dirname(CONFIG_FILE))
 
-        self.pkg_base: str = str(config['pkg_base']).replace(
-            CONFIG_BASE, configBase)
-        self.index_db: str = str(config['index_db']).replace(
-            CONFIG_BASE, configBase)
+        self.pkg_base: str = str(config['pkg_base']
+                                 ).replace(CONFIG_BASE, configBase)
+        self.index_db: str = str(config['index_db']
+                                 ).replace(CONFIG_BASE, configBase)
         try:
             self.ft_url: str = config['fallthrough']
             if not self.ft_url.endswith("/"):
@@ -30,6 +30,8 @@ class TinyConfig:
             self.overwrite = bool(config['overwrite'])
         except KeyError:
             self.overwrite = False
+
+        self.port = int(config['port'])
 
 
 config = TinyConfig()

@@ -40,10 +40,11 @@ class TinyDB:
     def __init__(self) -> None:
         needsInit = not os.path.isfile(config.index_db)
         print(f"TinyDB.init() Connecting to {config.index_db}")
-        if sqlite3.threadsafety != 3:
+        if sqlite3.threadsafety != 1:
             raise RuntimeError(
                 "sqlite3 version does not support serialized multithreading"
             )
+            # TODO? Can just remake the connection for eachrequest
         self.con = sqlite3.connect(config.index_db, check_same_thread=False)
 
         if needsInit:
@@ -153,7 +154,7 @@ class TinyDB:
 
     def getPackages(self) -> List[str]:
         res = self.con.execute(GET_PKGS_STMT)
-        return list(res.fetchall())
+        return [x[0] for x in res.fetchall()]
 
     def countPackages(self) -> int:
         res = self.con.execute(COUNT_PKGS_STMT)

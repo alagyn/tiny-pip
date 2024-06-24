@@ -1,3 +1,6 @@
+#--- import Config to initialize it
+from tinypip import config as tp_config
+
 #--- import DB to initialize it
 from tinypip import tinydb
 
@@ -36,7 +39,7 @@ if __name__ == '__main__':
 
     config = Config(
         'tinypip.__main__:app',
-        port=8000,
+        port=tp_config.config.port,
         log_level='debug',
         reload=False,
         host='0.0.0.0',
